@@ -1,4 +1,3 @@
-import random
 import Wall
 import pygame
 

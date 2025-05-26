@@ -28,12 +28,14 @@ def load_room(rx, ry): #ritar alla kvadrater enligt rum-arrayerna
                 Detail_back.Detail_back((x, y))
             if col == "n":
                 load_enemy("normal", x, y)
-            if col == "u":
-                load_enemy("ultra", x, y)
+            if col == "l":
+                load_enemy("large", x, y)
             if col == "f":
                 load_enemy("flying", x, y)
             if col == "r":
                 load_enemy("ranged", x, y)
+            if col == "b":
+                load_enemy("boss", x, y)
             x += 16
         y += 16
         x = 0
@@ -87,7 +89,7 @@ roomTEST = [
 "WWWWW                                                                      WWWWW",
 "WWWWWWWWWW                 WWWWW   WWWWW   WWWWW   WWWWW   WWWWW           WWWWW",
 "WWWWWWWWWW                 W   W   W   W   W   W   W   W   W   W           WWWWW",
-"WWWWWWWWWW                 W n W   W n W   W n W   W n W   W n W           WWWWW",
+"WWWWWWWWWW                 W n W   W l W   W f W   W r W   W b W           WWWWW",
 "WWWWWWWWWW                 W   W   W   W   W   W   W   W   W   W           WWWWW",
 "WWWWWWWWWW                 WWWWW   WWWWW   WWWWW   WWWWW   WWWWW           WWWWW",
 "WWWWW                                                                      WWWWW",
@@ -408,11 +410,12 @@ while running:
         player_mom_vert = 3
 
     for enem in Enemy.enemies:
-        enem.move(0, enem.mom_v)
-        enem.mom_v *= 0.98
-        enem.mom_v += 0.7
-        if enem.move_single_axis(0, enem.mom_v):
-            enem.mom_v = 3
+        if enem.type != "flying":
+            enem.move(0, enem.mom_v)
+            enem.mom_v *= 0.98
+            enem.mom_v += 0.7
+            if enem.move_single_axis(0, enem.mom_v):
+                enem.mom_v = 3
         enem.track(player.player_pos_x(), player.player_pos_y())
 
 
