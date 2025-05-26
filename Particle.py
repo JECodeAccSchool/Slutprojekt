@@ -6,7 +6,7 @@ import math
 
 
 class Particle(object):
-    def __init__(self, spe, pos_x, pos_y, col, ang, type, decay):
+    def __init__(self, pos_x, pos_y, ang, type, decay):
         self.rect = pygame.rect.Rect(pos_x, pos_y, 4, 4)
         self.angle = ang
         self.type = type
@@ -18,20 +18,20 @@ class Particle(object):
                 particles.append(self)
 
 
-    def move(self, spe, ang):
+    def move(self, spe, ang, d_on):
         self.rect.x += spe * math.sin(ang)
         self.rect.y += spe * math.cos(ang)
         rand = random.Random()
         if self.type == "trail":
             self.rect.y += 0.03 * rand.random() * math.pow(100 - (self.decay - 200) / 3, 2)
-        if self.decay < 0:
+        if self.decay < 0 and d_on:
             if self.type == "bullet":
-                print(particles)
                 particles.pop()
             if self.type == "trail":
                 part_trail.pop()
         else:
-            self.decay -= 1
+            if d_on:
+                self.decay -= 1
 
     def reval(self, val): #ge partikelns specifierade värde
         if val == "ang":
