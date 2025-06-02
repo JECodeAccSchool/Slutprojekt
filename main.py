@@ -1,7 +1,5 @@
 import random
 import math
-import time
-
 import Enemy
 import pygame
 import Particle
@@ -55,8 +53,6 @@ ry = 4
 grounded = False
 grounded1 = False
 crouchval = False
-checkground1 = 0
-checkground2 = 0
 gravity = 20
 shot_timer = 0
 screen = pygame.display.set_mode((screen.get_width(), screen.get_height()))
@@ -148,18 +144,18 @@ room40 = [
 "5555555555555555555555555555555555       5555555                                ",
 "55555555555555555555555555555555555       5555555                               ",
 "55555555555555555555555555555555555      55555555555                            ",
-"5555555555555555555555555555555555555555555555555555555                         ",
-"5555555555555555555555555555555555555555555555555555555555                      ",
-"555555555555555555555555555555555555555555555555555555555555                    ",
-"555555555555555555555555555555555555555555555555555555555555                    ",
-"55555555555555555555555555555555555555555555555555555555555555                  ",
-"555555555555555555555555555555555555555555555555555555555555555555              ",
-"55555555555555555555555555555555555555555555555555555555555555555555555555555555",
-"55555555555555555555555555555555555555555555555555555555555555555555555555555555",
-"55555555555555555555555555555555555555555555555555555555555555555555555555555555",
-"55555555555555555555555555555555555555555555555555555555555555555555555555555555",
-"55555555555555555555555555555555555555555555555555555555555555555555555555555555",
-"55555555555555555555555555555555555555555555555555555555555555555555555555555555"
+"555555555555555555555555555555555555   5555555555555555                         ",
+"555555555555555555555555555555555555    555555555555555555                      ",
+"555555555555555555555555555555555555      5555555555555555555                    ",
+"5555555555555555555555555555555555555     5555555555555555555                    ",
+"5555555555555555555555555555555555555     555555555555555555555                  ",
+"555555555555555555555555555555555555     5555555555555555555555555              ",
+"55555555555555555555555555555555555    55555555555555555555555555555555555555555",
+"55555555555555555555555555555555555    55555555555555555555555555555555555555555",
+"55555555555555555555555555555555555   555555555555555555555555555555555555555555",
+"55555555555555555555555555555555555   555555555555555555555555555555555555555555",
+"55555555555555555555555555555555555  5555555555555555555555555555555555555555555",
+"55555555555555555555555555555555555  5555555555555555555555555555555555555555555"
 ]
 
 room41 = [
@@ -227,14 +223,14 @@ room42 = [
 "      77777764333322222222 22222222222222                                       ",
 "      77777764333322222222 22222222222222                                       ",
 "      77777764333322222222 22222222222222                                       ",
-"      77777766643322222222 222222222222222                                      ",
+"      77777766643322222222 222222222222222                    f                 ",
 "      77777766433322222222 222222222222552                                      ",
 "      77777764333322222222 2225522222242224                                     ",
 "      77777764333322222222 2222242222424442                                     ",
 "      7777776433332222222222222224224242222                                     ",
 "      7777776433332222222222222224224422222                        44444        ",
-"  2   77777764333322222222222222242242222222              4444     466666       ",
-"   2 277777764443322222222222222224242222222  b          555 444   477777       ",
+"  2   77777764333322222222222222242242222222   n          4444     466666       ",
+"   2 277777764443322222222222222224242222222  bn n       555 444   477777       ",
 "   22 77777776633322222222222222222422222222 4444444    777    4444477777       ",
 "    2 77777776333322222222222554222422222222 6666666    77444444444477777444444 ",
 "    2 7777777433332222222222222244242222222227777777  47744444444444777774444444",
@@ -444,7 +440,7 @@ while running:
         if weapon_mode == "blast":
             if shot_timer < 0:
                 for n in range(17):
-                    Particle.Particle(player.player_pos_x() + 8, player.player_pos_y() + 16, mouse_ang - (math.pi / 16) + n * math.pi / 128, "blast", 50, len(Particle.particles))
+                    Particle.Particle(player.player_pos_x() + 8, player.player_pos_y() + 16, mouse_ang - (math.pi / 16) + n * (math.pi / 128) + rand.randint(-1, 1) / 10, "blast", 15, len(Particle.particles))
                 shot_timer = 120
 
     if keys[pygame.K_r]:
@@ -509,7 +505,7 @@ while running:
             for enem in Enemy.enemies:
                 enem.move(0, 0)
             Particle.Particle.move(part, 5, Particle.Particle.reval(part, "ang"), False)
-            pygame.draw.circle(screen, (255, 0, 0), (part.rect.x, part.rect.y), 0 + part.decay / 10)
+            pygame.draw.circle(screen, (255, 0, 0), (part.rect.x, part.rect.y), 0 + part.decay / 3)
 
         if Particle.Particle.reval(part, "type") == "bullet":
             Particle.Particle(part.rect.x, part.rect.y, mouse_ang, "trail", 500, len(Particle.particles))
@@ -521,9 +517,7 @@ while running:
 
         if Particle.Particle.reval(part, "type") == "blast":
             for n in range(1):
-                print(part.angle)
-                end_pos_bla_1 = pygame.Vector2(part.rect.x - 10 * math.atan(part.angle), part.rect.y - 10 * math.atan(part.angle))
-                pygame.draw.line(screen, (255, 0, 0), (part.rect.x, part.rect.y), end_pos_bla_1, 0 + int(part.decay))
+                pygame.draw.line(screen, (255, 0, 0), (part.rect.x, part.rect.y), part.reval("prepos"), 0 + int(float(part.decay) / 3))
 
     for part in Particle.part_trail:
         pygame.draw.circle(screen, (255, 255, 0), (part.rect.x, part.rect.y), 0)
@@ -567,12 +561,16 @@ while running:
 
     #visa omladdning av shot
     if shot_timer >= 0:
-        if weapon_mode == "normal":
-            rect = pygame.Rect(50, 50, shot_timer * 2, 20)
-            cd_rect = pygame.draw.rect(screen, (255, 255, 255), rect)
-        if weapon_mode == "blast":
-            rect = pygame.Rect(50, 50, shot_timer, 20)
-            cd_rect = pygame.draw.rect(screen, (255, 155, 155), rect)
+
+        shot_1 = pygame.Rect(50, 50, shot_timer * 2, 20)
+        cd_rect = pygame.draw.rect(screen, (255, 255, 255), shot_1)
+        if shot_timer > 60:
+            shot_2 = pygame.Rect(170, 50, shot_timer * 2 - 120, 20)
+            pygame.draw.rect(screen, (255, 150, 150), shot_2)
+
+    healthbar = pygame.Rect(player.player_pos_x() - 42, player.player_pos_y() - 32, player.player_health(), 10)
+    pygame.draw.rect(screen, (255 - player.player_health(), 155 + player.player_health(), 150), healthbar)
+
 
 
     switch_timer -= 1

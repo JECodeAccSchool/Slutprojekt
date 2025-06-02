@@ -10,6 +10,9 @@ class Particle(object):
         self.angle = ang
         self.type = type
         self.decay = decay #timer tills partikeln försvinner för att spara resurser
+        if type == "blast":
+            self.prev_pos = pygame.Vector2(0, 0)
+
         if type == "trail":
             part_trail.append(self)
         else:
@@ -18,7 +21,10 @@ class Particle(object):
 
 
 
+
     def move(self, spe, ang, d_on):
+        if self.type == "blast" and d_on:
+            self.prev_pos = pygame.Vector2(self.rect.x, self.rect.y)
         self.rect.x += spe * math.sin(ang)
         self.rect.y += spe * math.cos(ang)
         rand = random.Random()
@@ -49,6 +55,8 @@ class Particle(object):
             return self.type
         if val == "decay":
             return self.decay
+        if self.type == "blast" and val == "prepos":
+            return self.prev_pos
 
 
 

@@ -133,6 +133,20 @@ class Enemy(object):
                     return True
                 else:
                     return False
+        for enem in enemies:
+            if self.rect.colliderect(enem.rect) and self.index != enem.index:
+                if dx > 0:
+                    self.rect.right = enem.rect.left
+                if dx < 0:
+                    self.rect.left = enem.rect.right
+                if dy < 0:
+                    self.rect.top = enem.rect.bottom
+                if dy > 0:
+                    self.rect.bottom = enem.rect.top
+                    self.ground = True
+                    return True
+                else:
+                    return False
 
 
 
