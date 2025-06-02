@@ -1,4 +1,3 @@
-import pygame
 import random
 import math
 import pygame
@@ -89,7 +88,6 @@ class Enemy(object):
             if self.health < 0:
                 p = 0
                 for n in range(len(enemies)):
-                    print(n)
                     if enemies[n - p].index == self.index:
                         del enemies[n]
                         p += 1
@@ -122,7 +120,7 @@ class Enemy(object):
 
         #kollision med väggar
         for wall in Wall.walls:
-            if self.rect.colliderect(wall.rect):
+            if self.rect.colliderect(wall.rect) and wall.collide_on:
                 if dx > 0:
                     self.rect.right = wall.rect.left
                 if dx < 0:

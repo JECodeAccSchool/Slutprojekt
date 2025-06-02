@@ -20,7 +20,7 @@ class Player(object):
 
         #kollision med väggar
         for wall in Wall.walls:
-            if self.rect.colliderect(wall.rect):
+            if self.rect.colliderect(wall.rect) and wall.collide_on:
                 if dx > 0:
                     self.rect.right = wall.rect.left
                 if dx < 0:
