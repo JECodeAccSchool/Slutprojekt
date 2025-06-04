@@ -6,7 +6,7 @@ import Particle
 import Wall
 import Player
 
-def load_room(rx, ry): #ritar alla kvadrater enligt rum-arrayerna
+def load_room(rx, ry): #ritar alla kvadrater enligt rum-listorna
     Wall.walls = []
     x = y = 0
     for row in rooms[rx + 5 * ry]:
@@ -66,6 +66,7 @@ saved_pos_1 = pygame.Vector2(0, 0)
 color_var = 0
 weapon_mode = "normal"
 switch_timer = 0
+crouch_timer = 0
 
 
 
@@ -115,31 +116,31 @@ roomTEST = [
 ]
 
 room40 = [
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
-"                                                                                ",
 "55555555555555555555555                                                         ",
-"55555555555555555555555                                                         ",
-"55555555555555555555555                                                         ",
-"55555555555555555555555                                                         ",
+"55555555555555555555555                   55                                    ",
+"55555555555555555555555                  5             4     566666             ",
+"555555555555555555555555555          4555             454555555                 ",
+"5555555555555555555555555555555555554555555555555555555545                      ",
+"555555555555555555555555555555555555455555555555       4  4444                  ",
+"5555555555555555555555555            44         44     4      44                ",
+"55555555555555555555555            444444               4       3333            ",
+"55555555555555555555555           4      4444444        4                       ",
+"55555555555555555555555           4 3           4444444444                      ",
+"55555555555555555555555           4  3333 3333            44                    ",
+"55555555555555555555555          4    3   3      333  3     4                   ",
+"55555555555555555555555          4    3   333   3   3  333  4                   ",
+"55555555555555555555555          4    3   3      33    3  34                    ",
+"55555555555555555555555         4     3   333  3   3  3    4                    ",
+"55555555555555555555555          44444          333  3     4                   ",
+"55555555555555555555555               4444444             4                     ",
+"55555555555555555555555                      4444444444   4                     ",
+"555555555555555555555555                               444                      ",
 "555555555555555555555555                                                        ",
-"555555555555555555555555                                                        ",
-"555555555555555555555555                                                        ",
-"555555555555555555555555                                                        ",
-"5555555555555555555555555                                                       ",
-"555555555555555555555555555                                                     ",
-"555555555555555555555555555555                                                  ",
+"555555555555555555555555      4                                                 ",
+"555555555555555555555555       4 4                                              ",
+"5555555555555555555555555    33 44                                              ",
+"55555555555555555555555555533  444                                              ",
+"555555555555555555555555555555                                                   ",
 "5555555555555555555555555555555555       555                                    ",
 "5555555555555555555555555555555555       5555555                                ",
 "55555555555555555555555555555555555       5555555                               ",
@@ -178,17 +179,17 @@ room41 = [
 "                                         4444444                                ",
 "                                         44444555                               ",
 "                                         4444444                                ",
-"                                         4444444                                ",
-"                                         4444444                                ",
-"                                         4444444                                ",
-"                                         4444444                                ",
-"                                         4444444                                ",
-"                                 55555   4444444                                ",
-"                               55555555554444444                                ",
-"                              555555555555554444                                ",
-"                              555555555555555444                                ",
-"                             5555555555555555444                                ",
-"                     4444  555555555555555555444                                ",
+"                          3              4444444                                ",
+"                         33              4444444                                ",
+"                         33              4444444                                ",
+"                        3333             4444444                                ",
+"                        3333             4444444                                ",
+"                        333      55555   4444444                                ",
+"                        333    55555555554444444                                ",
+"                        333   555555555555554444                                ",
+"                        333   555555555555555444                                ",
+"                        333  5555555555555555444                                ",
+"                     444433555555555555555555444                                ",
 "                  4444444455555555555555555555444                               ",
 "              44444444444555555555555555555555544                               ",
 "            4444444444444555555555555555555555554                               ",
@@ -221,18 +222,18 @@ room42 = [
 "      7777776433332222222  22222222222  2                                       ",
 "      7777776433332222222  222222222222 2                                       ",
 "      77777764333322222222 22222222222222                                       ",
-"      77777764333322222222 22222222222222                                       ",
-"      77777764333322222222 22222222222222                                       ",
-"      77777766643322222222 222222222222222                    f                 ",
-"      77777766433322222222 222222222222552                                      ",
-"      77777764333322222222 2225522222242224                                     ",
-"      77777764333322222222 2222242222424442                                     ",
-"      7777776433332222222222222224224242222                                     ",
-"      7777776433332222222222222224224422222                        44444        ",
-"  2   77777764333322222222222222242242222222   n          4444     466666       ",
-"   2 277777764443322222222222222224242222222  bn n       555 444   477777       ",
-"   22 77777776633322222222222222222422222222 4444444    777    4444477777       ",
-"    2 77777776333322222222222554222422222222 6666666    77444444444477777444444 ",
+"      77777764333322222222 22222222222222                  222         2        ",
+"      77777764333322222222 22222222222222                22222222222222222222222",
+"      77777766643322222222 222222222222222               22222222222222222222222",
+"      77777766433322222222 222222222222552               22222222222222222222222",
+"      77777764333322222222 2225522222242224              22222222222222222222222",
+"      77777764333322222222 2222242222424442              22222222222222222222222",
+"      7777776433332222222222222224224242222              22222222222222222222222",
+"      7777776433332222222222222224224422222              22222222224444422222222",
+"  2   77777764333322222222222222242242222222             24444222224666662222222",
+"   2 277777764443322222222222222224242222222             55524442224777772222222",
+"   22 77777776633322222222222222222422222222 4444444    777222244444777772222222",
+"    2 77777776333322222222222554222422222222 6666666    774444444444777774444442",
 "    2 7777777433332222222222222244242222222227777777  47744444444444777774444444",
 "     27777777433332222222222222222422222222227777777 447744444444444777774444444",
 "     277777774333322222222222222224244222222277777774447774444444444777774444444",
@@ -247,43 +248,43 @@ room42 = [
 ]
 
 room43 = [
-"                                        4                                       ",
-"                                        4                                       ",
-"                                        4                                       ",
-"                                       4                                        ",
-"                                       4                                        ",
-"                                       4                                        ",
-"                                       4                                        ",
-"                                       4                                        ",
-"                                      4                                         ",
-"                                      4                                         ",
-"                                      4                                         ",
-"                                      4                                         ",
-"                                      4                                         ",
-"                                     4                                          ",
-"                                     4                                          ",
-"                                     4                                          ",
-"                                     4                                          ",
-"                                     4                                          ",
-"                                    4                                           ",
-"                                    4                                           ",
-"                                    4                                           ",
-"                                    4                                           ",
-"                                    4                                           ",
-"                                   4                                            ",
-"                                   4                                            ",
-"                                   4                                            ",
-"    444444                         4                                            ",
-"   6666664                         4                                            ",
-"   7777774                        4                                             ",
-"   7777774                        4                                             ",
-"   7777774                        4                                             ",
-"   7777774                       4                                              ",
-"   7777774                       4                                   55555555555",
-"   7777774                       4                       55555555555555555555555",
-"   7777774                      4                5555555555555555555555555555555",
-"   7777774                      4            55555555555555555555555555555555555",
-"   7777774               5555555555555555555555555555555555555555555555555555555",
+"                                        33              22                    66",
+"                                        33               222                666 ",
+"                                        33                22               66   ",
+"                                       33                  22             66    ",
+"              2222222222222            33                   22           66     ",
+"              222   2222222            33                    22         66      ",
+"              222   2222222            33                     222     666       ",
+"              222   2222222            33                     2 222  66 6       ",
+"              2222222222222           33                          6666          ",
+"              2222222222222           33                        666 22          ",
+"              2222222222222           33                       66    222        ",
+"              2222222222222           33                      55       22       ",
+"              22222222   22           33                     555        22      ",
+"              22222222   22          33                     55 5         22     ",
+"              22222222   22          33                   555             222   ",
+"              22222222   22          33                  555              2 222 ",
+"              22222222   22          33                555                    22",
+"              2222222222222          33               55 5                      ",
+"              2222222222222         43               55  5                      ",
+"              2222222222222         43              55                          ",
+"              2222222222222         44             55                           ",
+"              2222222222222         44           555                            ",
+"              2222222222222         44          55 5                            ",
+"              2222222222222        44          55                               ",
+"              2222222222222        44         55                                ",
+"              2222222222222        44        54                                 ",
+"    444444    2222222222222        44       44                                  ",
+"   6666664    2222222222222        44      44                                   ",
+"   7777774    2222222222222       44      444                                   ",
+"   7777774    222  22222222       44     44                                     ",
+"   7777774    222  22222222       44    44                                      ",
+"   7777774    222  22222222      44    444                                      ",
+"   7777774    2222222222222      44   44 4                           55555555555",
+"   7777774    2222222222222      44  44                  55555555555555555555555",
+"   7777774    2222222222222     44 444           5555555555555555555555555555555",
+"   7777774    2222222222222     44444        55555555555555555555555555555555555",
+"   7777774    222222222225555555555555555555555555555555555555555555555555555555",
 "55555555555555555555555555555555555555555555555555555555555555555555555555555555",
 "55555555555555555555555555555555555555555555555555555555555555555555555555555555",
 "55555555555555555555555555555555555555555555555555555555555555555555555555555555",
@@ -354,6 +355,7 @@ while running:
         rx -= 1
         Particle.particles = []
         Particle.part_trail = []
+        Particle.enemy_bul = []
         Enemy.enemies = []
         load_room(rx, ry)
     if player.rect.x > 1270:
@@ -362,12 +364,14 @@ while running:
         Particle.particles = []
         Particle.part_trail = []
         Enemy.enemies = []
+        Particle.enemy_bul = []
         load_room(rx, ry)
     if player.rect.y < 10:
         player.rect.y = 640
         ry -= 1
         Particle.particles = []
         Particle.part_trail = []
+        Particle.enemy_bul = []
         Enemy.enemies = []
         load_room(rx, ry)
     if player.rect.y > 650:
@@ -375,6 +379,7 @@ while running:
         ry += 1
         Particle.particles = []
         Particle.part_trail = []
+        Particle.enemy_bul = []
         Enemy.enemies = []
         load_room(rx, ry)
 
@@ -394,17 +399,19 @@ while running:
 
         mouse_ang = -(math.atan((cursor_pos.y - (player.player_pos_y() + 16)) / (cursor_pos.x - (player.player_pos_x() + 8))) + math.pi / 2)
         if (cursor_pos.x - player.player_pos_x()) > 0:
+            #här finns ett problem då man skjutar rakt upp och rakt ner, och då åker skottet åt andra hållet
             mouse_ang = (math.atan(((player.player_pos_y() + 16) - cursor_pos.y) / (cursor_pos.x - (player.player_pos_x() + 8))) + math.pi / 2)
-    else:
-        mouse_ang = 2 * math.pi / 2
+
+
 
     #gravitation och luftmotstånd
-    player.move(0, player_mom_vert)
+    player.move(0, player_mom_vert, True)
     player_mom_vert *= 0.98 #luftmotstånd
     player_mom_vert += 0.7 #gravitation
     if player.move_single_axis(0, player_mom_vert):
         player_mom_vert = 3
 
+    #gravitation för fiender
     for enem in Enemy.enemies:
         if enem.type != "flying":
             enem.move(0, enem.mom_v)
@@ -424,12 +431,24 @@ while running:
     #kontroller
     keys = pygame.key.get_pressed()
     #krypläge
-    if keys[pygame.K_s]:
-        player.hold_s(player.player_pos_x(), player.player_pos_y(), crouchval)
+
+    if keys[pygame.K_s] and not crouchval and crouch_timer <= 0:
+        player.rect = pygame.rect.Rect(player.player_pos_x(), player.player_pos_y(), 16, 16)
         crouchval = True
-    else:
-        player.nhold_s(player.player_pos_x(), player.player_pos_y(), crouchval)
+        crouch_timer = 10
+
+    if keys[pygame.K_s] and crouchval and crouch_timer <= 0:
+        player.rect.y -= 16
+        player.rect = pygame.rect.Rect(player.player_pos_x(), player.player_pos_y(), 16, 32)
         crouchval = False
+        if player.collide():
+            player.rect.y += 16
+            player.rect = pygame.rect.Rect(player.player_pos_x(), player.player_pos_y(), 16, 16)
+            crouchval = True
+        crouch_timer = 10
+
+
+
 
     #skicka en partikel mot musen
     if keys[pygame.K_f]:
@@ -439,8 +458,8 @@ while running:
                 shot_timer = 60
         if weapon_mode == "blast":
             if shot_timer < 0:
-                for n in range(17):
-                    Particle.Particle(player.player_pos_x() + 8, player.player_pos_y() + 16, mouse_ang - (math.pi / 16) + n * (math.pi / 128) + rand.randint(-1, 1) / 10, "blast", 15, len(Particle.particles))
+                for n in range(5):
+                    Particle.Particle(player.player_pos_x() + 8, player.player_pos_y() + 16, mouse_ang - (math.pi / 16) + n * (math.pi / 32) + rand.randint(-1, 1) / 10, "blast", 15, len(Particle.particles))
                 shot_timer = 120
 
     if keys[pygame.K_r]:
@@ -455,19 +474,32 @@ while running:
 
     if keys[pygame.K_a]:
         if crouchval == False:
-            player.move(-10, 0)
+            player.move(-10, 0, True)
         else:
-            player.move(-3, 0)
+            player.move(-3, 0, True)
 
     if keys[pygame.K_d]:
         if crouchval == False:
-            player.move(10, 0)
+            player.move(10, 0, True)
         else:
-            player.move(3, 0)
+            player.move(3, 0, True)
     #hoppa
     if keys[pygame.K_w] and (player.move_single_axis(0, player_mom_vert) == True):
         player_mom_vert = -10
 
+
+
+
+    for enem in Enemy.enemies:
+        if enem.type == "ranged":
+            if enem.reload <= 0:
+                enem.shoot()
+                enem.reload = 50
+            enem.reload -= 1
+
+
+
+    #väggar, placeras i den ordning som de är skrivna här, med plats emellan för bland annat sprajter
     for wall in Wall.walls:
         if wall.type == "back_wall_3":
             pygame.draw.rect(screen, wall.color, wall.rect)
@@ -480,14 +512,17 @@ while running:
         if wall.type == "back_wall":
             pygame.draw.rect(screen, wall.color, wall.rect)
 
-    #spelar-sprajten
+    #spelaren
     pygame.draw.rect(screen, (255, 255, 255), player.rect)
 
     #fiender
     for enem in Enemy.enemies:
         pygame.draw.rect(screen, enem.color, enem.rect)
 
+    #skott
     for part in Particle.particles:
+
+        #kollisionsytor för skott
         if part.type == "bullet":
             Particle.Particle.move(part, 10, Particle.Particle.reval(part, "ang"), True)
             for enem in Enemy.enemies:
@@ -507,6 +542,8 @@ while running:
             Particle.Particle.move(part, 5, Particle.Particle.reval(part, "ang"), False)
             pygame.draw.circle(screen, (255, 0, 0), (part.rect.x, part.rect.y), 0 + part.decay / 3)
 
+
+        #detaljer för skott, som rök
         if Particle.Particle.reval(part, "type") == "bullet":
             Particle.Particle(part.rect.x, part.rect.y, mouse_ang, "trail", 500, len(Particle.particles))
             for n in range(5):
@@ -519,6 +556,18 @@ while running:
             for n in range(1):
                 pygame.draw.line(screen, (255, 0, 0), (part.rect.x, part.rect.y), part.reval("prepos"), 0 + int(float(part.decay) / 3))
 
+    for part in Particle.enemy_bul:
+        if part.type == "danger":
+            Particle.Particle.move(part, 5, Particle.Particle.reval(part, "ang"), True)
+            for player in Player.players:
+                player.move(0, 0, False)
+            Particle.Particle.move(part, 5, Particle.Particle.reval(part, "ang"), False)
+            for player in Player.players:
+                player.move(0, 0, False)
+            Particle.Particle.move(part, 5, Particle.Particle.reval(part, "ang"), False)
+            pygame.draw.circle(screen, (255, 0, 0), (part.rect.x, part.rect.y), 6)
+
+    #färg för rök, beroende på decay
     for part in Particle.part_trail:
         pygame.draw.circle(screen, (255, 255, 0), (part.rect.x, part.rect.y), 0)
         if saved_pos_1 != (0, 0) and not (math.sqrt(math.pow(saved_pos_1.x - part.rect.x, 2) + math.pow(saved_pos_1.y - part.rect.y, 2))) > 100:
@@ -546,6 +595,7 @@ while running:
                                                                 (player.player_pos_x() + 8 - 12 * math.sin(mouse_ang), player.player_pos_y() + 16 - 12 * math.cos(mouse_ang - math.pi / 12)),
                                                                 (player.player_pos_x() + 8 + 12 * math.sin(mouse_ang + math.pi / 8), player.player_pos_y() + 16 + 12 * math.cos(mouse_ang + math.pi / 12))))
 
+    #fortsättning av väggplacering
     for wall in Wall.walls:
         if wall.type == "wall":
             pygame.draw.rect(screen, wall.color, wall.rect)
@@ -568,12 +618,19 @@ while running:
             shot_2 = pygame.Rect(170, 50, shot_timer * 2 - 120, 20)
             pygame.draw.rect(screen, (255, 150, 150), shot_2)
 
-    healthbar = pygame.Rect(player.player_pos_x() - 42, player.player_pos_y() - 32, player.player_health(), 10)
-    pygame.draw.rect(screen, (255 - player.player_health(), 155 + player.player_health(), 150), healthbar)
+    #visa hälsa
+    if not player.player_health() <= 0:
+        healthbar = pygame.Rect(player.player_pos_x() - 42, player.player_pos_y() - 32, player.player_health(), 10)
+        pygame.draw.rect(screen, (255 - player.player_health(), 155 + player.player_health(), 150), healthbar)
 
-
-
+    # hindrar spelaren från att byta vapen för snabbt
     switch_timer -= 1
+
+    crouch_timer -= 1
+
+    if player.health <= 0:
+        end_screen_death = pygame.Rect(300, 180, 700, 300)
+        pygame.draw.rect(screen, (255, 255, 255), end_screen_death)
 
     pygame.display.flip()
 

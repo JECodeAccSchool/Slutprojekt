@@ -1,6 +1,7 @@
 import Wall
 import Enemy
 import pygame
+import Particle
 
 class Player(object):
 
@@ -11,17 +12,28 @@ class Player(object):
         self.health = 100
         self.i_frames = 0
         self.saved_vars = pygame.Vector2(0, 0)
+        players.append(self)
+    def collide(self):
+        dy = self.saved_vars.y
+        for wall in Wall.walls:
+            if self.rect.colliderect(wall.rect) and wall.collide_on:
+                if dy < 0 or dy > 0:
+                    return True
+                else:
+                    return False
 
-    def move(self, dx, dy):
+    #flytta på spelaren
+    def move(self, dx, dy, i_tick):
         if dx != 0:
             self.move_single_axis(dx, 0)
         if dy != 0:
             self.move_single_axis(0, dy)
-        self.i_frames -= 1
-        if self.i_frames < 0:
-            self.i_frames = 0
+        if i_tick:
+            self.i_frames -= 1
+            if self.i_frames < 0:
+                self.i_frames = 0
 
-
+    #kolla efter kollision
     def move_single_axis(self, dx, dy):
         self.rect.x += dx
         self.rect.y += dy
@@ -44,7 +56,8 @@ class Player(object):
 
 
 
-
+    #funktioner som jag vill ta bort, men som redan används i specifika områden för att få information om spelaren
+    #vill egentligen sätta ihop dessa funktioner till en enda som i partikelklassen
     def player_pos_x(self):
         return self.rect.x
     def player_pos_y(self):
@@ -56,31 +69,37 @@ class Player(object):
             for enem in Enemy.enemies:
                 if self.rect.colliderect(enem.rect) and self.i_frames <= 0:
                     if dx > 0:
-                        self.health -= 5
+                        self.health -= enem.damage
                         self.i_frames += 10
                     if dx < 0:
-                        self.health -= 5
+                        self.health -= enem.damage
                         self.i_frames += 10
                     if dy < 0:
-                        self.health -= 5
+                        self.health -= enem.damage
                         self.i_frames += 10
                     if dy > 0:
-                        self.health -= 5
+                        self.health -= enem.damage
                         self.i_frames += 10
+            for part in Particle.enemy_bul:
+                if self.rect.colliderect(part.rect) and self.i_frames <= 0:
+                    if dx > 0:
+                        self.health -= 10
+                        self.i_frames += 10
+                    if dx < 0:
+                        self.health -= 10
+                        self.i_frames += 10
+                    if dy < 0:
+                        self.health -= 10
+                        self.i_frames += 10
+                    if dy > 0:
+                        self.health -= 10
+                        self.i_frames += 10
+
         return self.health
 
 
-    def hold_s(self, x, y, crouch):
-        if crouch == False:
-            self.rect = pygame.rect.Rect(x, y, 16, 16)
-            self.rect.y += 16
-        else:
-            self.rect = pygame.rect.Rect(x, self.rect.y, 16, 16)
-        crouch = True
-        return crouch
 
-    def nhold_s(self, x, y, crouch): #stoppar krypläge
-        crouch = False
-        self.rect = pygame.rect.Rect(x, y, 16, 32)
-        return crouch
 
+    #minskar spelarens storlek och hastighet
+
+players = []

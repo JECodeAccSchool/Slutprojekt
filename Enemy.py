@@ -1,4 +1,5 @@
 import random
+import Player
 import math
 import pygame
 import Wall
@@ -8,6 +9,7 @@ class Enemy(object):
     def __init__(self, typ, pos_x, pos_y, index):
         enemies.append(self)
         self.type = typ
+        #fiendetypers egenskaper
         if self.type == "normal":
             self.rect = pygame.rect.Rect(pos_x, pos_y, 16, 16)
             self.rect_dam = pygame.rect.Rect(pos_x + 8, pos_y + 8, 12, 12)
@@ -46,11 +48,14 @@ class Enemy(object):
             self.rect_dam = pygame.rect.Rect(pos_x + 8, pos_y + 8, 16, 16)
             self.health = 70
             self.speed = 4
-            self.damage = 5
+            self.damage = 0
             self.mom_v = 0
             self.index = index
             self.color = (0, 200, 0)
             self.timer = 0
+            self.reload = 50
+            self.angle = 0
+
 
         if self.type == "boss":
             self.rect = pygame.rect.Rect(pos_x, pos_y, 16, 16)
@@ -63,6 +68,7 @@ class Enemy(object):
             self.color = (200, 200, 0)
             self.timer = 0
 
+    #flytta på fienden
     def move(self, dx, dy):
         if dx != 0:
             self.move_single_axis(dx, 0)
@@ -81,7 +87,7 @@ class Enemy(object):
                    self.color = (0, 200, 0)
                 if self.type == "boss":
                    self.color = (200, 200, 0)
-            if self.rect.colliderect(part.rect) and self.timer < 0:
+            if self.rect.colliderect(part.rect) and self.timer < 0 and not part.type == "danger":
                 self.health -= 30
                 self.color = (255, 255, 255)
                 self.timer = 25
@@ -93,7 +99,7 @@ class Enemy(object):
                         p += 1
         self.timer -= 1
 
-
+    #gå mot spelaren
     def track(self, p_pos_x, p_pos_y):
         if self.rect.x < p_pos_x:
             saved_pos = self.rect.x
@@ -112,8 +118,26 @@ class Enemy(object):
             if self.rect.y > p_pos_y:
                 self.move(0, -self.speed)
 
+    def find_player(self):
+        angle = 0
+        for player in Player.players:
+            if (player.player_pos_x() - (self.rect.x + 8)) != 0:
+
+                angle = -(math.atan((player.player_pos_y() - (self.rect.y + 16)) / (
+                            player.player_pos_x() - (self.rect.x + 8))) + math.pi / 2)
+                if (player.player_pos_x() - self.rect.x) > 0:
+                    # här finns ett problem då man skjutar rakt upp och rakt ner, och då åker skottet åt andra hållet
+                    angle = (math.atan(((self.rect.y + 16) - player.player_pos_y()) / (
+                                player.player_pos_x() - (self.rect.x + 8))) + math.pi / 2)
+        return angle
 
 
+    def shoot(self):
+        angle = self.find_player()
+        Particle.Particle(self.rect.x, self.rect.y, angle, "danger", 40, len(Particle.enemy_bul))
+
+
+    #kolla efter kollisioner
     def move_single_axis(self, dx, dy):
         self.rect.x += dx
         self.rect.y += dy

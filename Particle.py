@@ -10,18 +10,21 @@ class Particle(object):
         self.angle = ang
         self.type = type
         self.decay = decay #timer tills partikeln försvinner för att spara resurser
-        if type == "blast":
+        if type == "blast": #används istället för en lista
             self.prev_pos = pygame.Vector2(0, 0)
 
         if type == "trail":
             part_trail.append(self)
         else:
-            particles.append(self)
+            if type == "danger":
+                enemy_bul.append(self)
+            else:
+                particles.append(self)
 
 
 
 
-
+    #flytta på partikeln
     def move(self, spe, ang, d_on):
         if self.type == "blast" and d_on:
             self.prev_pos = pygame.Vector2(self.rect.x, self.rect.y)
@@ -30,17 +33,20 @@ class Particle(object):
         rand = random.Random()
         if self.type == "trail":
             self.rect.y += 0.03 * rand.random() * math.pow(100 - (self.decay - 200) / 3, 2)
-        if self.decay < 0 and d_on:
+        if self.decay <= 0 and d_on and not (self.type == "trail" or self.type == "danger"):
             p = 0
             for n in range(len(particles)):
                 if particles[n - p].index == self.index:
                     del particles[n]
                     p += 1
-            if self.type == "trail":
-                part_trail.pop()
         else:
             if d_on:
                 self.decay -= 1
+        if self.decay <= 0 and d_on:
+            if self.type == "trail":
+                part_trail.pop()
+            if self.type == "danger":
+                enemy_bul.pop()
         if self.type == "blast":
             deriv = 1
             deriv *= rand.randint(-1, 1)
@@ -62,3 +68,4 @@ class Particle(object):
 
 particles = []
 part_trail = []
+enemy_bul = []

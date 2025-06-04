@@ -8,6 +8,7 @@ class Wall(object):
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
         rand = random.Random()
         color_val = 15 * rand.random()
+        #väggtyper samt deras egenskaper
         if type == "wall":
             self.type = "wall"
             self.color = (200 + color_val, 200 + color_val, 200 + color_val)
