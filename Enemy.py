@@ -95,22 +95,25 @@ class Enemy(object):
                 p = 0
                 for n in range(len(enemies)):
                     if enemies[n - p].index == self.index:
+                        for player in Player.players:
+                            player.health += 10 #spelaren får hälsa när en fiende dör
                         del enemies[n]
                         p += 1
         self.timer -= 1
 
     #gå mot spelaren
     def track(self, p_pos_x, p_pos_y):
-        if self.rect.x < p_pos_x:
-            saved_pos = self.rect.x
-            self.move(self.speed, 0)
-            if saved_pos == self.rect.x and self.move_single_axis(0, self.mom_v):
-                self.mom_v = -5
-        if self.rect.x > p_pos_x:
-            saved_pos = self.rect.x
-            self.move(-self.speed, 0)
-            if saved_pos == self.rect.x and self.move_single_axis(0, self.mom_v):
-                self.mom_v = -5
+        if not self.type == "ranged":
+            if self.rect.x < p_pos_x:
+                saved_pos = self.rect.x
+                self.move(self.speed, 0)
+                if saved_pos == self.rect.x and self.move_single_axis(0, self.mom_v):
+                    self.mom_v = -5
+            if self.rect.x > p_pos_x:
+                saved_pos = self.rect.x
+                self.move(-self.speed, 0)
+                if saved_pos == self.rect.x and self.move_single_axis(0, self.mom_v):
+                    self.mom_v = -5
 
         if self.type == "flying":
             if self.rect.y < p_pos_y:
@@ -134,7 +137,7 @@ class Enemy(object):
 
     def shoot(self):
         angle = self.find_player()
-        Particle.Particle(self.rect.x, self.rect.y, angle, "danger", 40, len(Particle.enemy_bul))
+        Particle.Particle(self.rect.x, self.rect.y, angle, "danger", 100, len(Particle.enemy_bul))
 
 
     #kolla efter kollisioner
